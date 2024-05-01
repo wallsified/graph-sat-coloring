@@ -1,0 +1,4 @@
+-- ------------------------------------------------------------------------------
+-- En este archivo se puede poner información que a posteriori 
+-- se mostrará en terminal. Por ejemplo, la lógica detrás del 
+-- programa, algun easter egg, etc. 
