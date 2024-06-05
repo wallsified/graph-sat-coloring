@@ -13,6 +13,9 @@ module Graphs
     graficaK5,
     graficaMariposa,
     graficaPetersen,
+    graficaRandom,
+    obtenerAristas,
+    obtenerVertices
   )
 where
 
@@ -28,22 +31,32 @@ data Grafica = Grafica
   }
   deriving (Show, Eq)
 
--- Crear una gráfica vacía
+-- Crea una gráfica vacía
 crearGrafica :: Grafica
 crearGrafica = Grafica [] []
 
--- Agregar un vértice a la gráfica
+-- Agrega un vértice a la gráfica. Los vértices son identificados
+-- por un número, por lo que se agregan usando Ints.
 agregarVertice :: Vertice -> Grafica -> Grafica
 agregarVertice v (Grafica vs as) = Grafica (nub (v : vs)) as
 
--- Agregar una arista a la gráfica
+-- Agrega una arista a la gráfica. Ambos vértices deben existir en 
+-- la gráfica para agregar una arista.
 agregarArista :: Arista -> Grafica -> Grafica
 agregarArista (v1, v2) g@(Grafica vs as)
   | v1 `elem` vs && v2 `elem` vs = Grafica vs (nub ((v1, v2) : as))
   | otherwise = error "Ambos vértices deben existir en la gráfica para agregar una arista."
 
--- Obtener los vecinos de un vértice
--- Busca en ambas direcciones (v, w) y (w, v) para encontrar todos los vecinos
+-- Obtención de los vértices de una gráfica.
+obtenerVertices :: Grafica -> [Vertice]
+obtenerVertices (Grafica vs _) = vs
+
+-- Obtención de los vértices de una gráfica.
+obtenerAristas :: Grafica -> [Arista]
+obtenerAristas (Grafica _ as) = as
+
+-- Obtener los vecinos de un vértice. Busca en ambas direcciones (v, w) 
+-- y (w, v) para encontrar todos los vecinos.
 vecinos :: Vertice -> Grafica -> [Vertice]
 vecinos vertice (Grafica _ aristas) =
   -- Para cada arista (v1, v2), se verifica si v1 es igual al vertice dado.
@@ -72,3 +85,6 @@ graficaK5 = Grafica [1 .. 5] [(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2
 -- Gráfica 6-Ciclo, un hexágono.
 graficaCiclo6 :: Grafica
 graficaCiclo6 = Grafica [1 .. 6] [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 1)]
+
+graficaRandom :: Grafica
+graficaRandom = Grafica [1..4] [(1, 2), (2, 3), (3, 4), (4, 1), (1, 3)]
