@@ -1,54 +1,81 @@
 module GraphColoring
-  ( Color,
-    kColoracionSimple,
+  ( kColoracion,
+    Coloracion,
   )
 where
 
+import Data.Map (Map)
+import Data.Map qualified as Map
 import Graphs
+import SAT.MiniSat
 
 -- Representamos los colores como enteros del 1 al k
 type Color = Int
-type Coloracion = Maybe [(Vertice, Color)]
 
--- kColoracion :: Grafica -> Int -> [Coloracion]
+-- Definimos las variables de coloración
+data ColorFormula = ColorFormula Vertice Color deriving (Eq, Ord, Show)
 
--- Función para encontrar una k-coloración única. Usando 'Maybe' declaramos
--- el hecho de que es posible no tener una k-coloración. Devuelve Just con una
--- lista de pares (vértice, color) si encuentra una coloración válida, o Nothing
--- si no es posible.
-kColoracionSimple :: Grafica -> Int -> Coloracion
-kColoracionSimple graph k = kColorar (obtenerVertices graph) (obtenerAristas graph) k []
+-- El tipo Coloración será la lista de tuplas vértice-color asignado
+type Coloracion = [(Vertice, Color)]
 
--- Función que intenta colorear los vértices utilizando backtracking. Se recibe
--- una lista de vértices y una de aristas, el número de colores con los que se
--- busca colorear y la asignación actual de colores, por lo que es una función
--- recursiva.
+-- Crear variables de color para cada vértice y color. Iteramos sobre
+-- cada vértice y sobre cada número del 1 al k para regresar una lista
+-- con las formulas de Color.
+colorFormulas :: [Vertice] -> Int -> [ColorFormula]
+colorFormulas vs k = [ColorFormula v c | v <- vs, c <- [1 .. k]]
+
+-- Crear fórmula booleana que representa el problema de k-coloración.
+-- La fórmula asegura que cada vértice tenga exactamente un color y
+-- que vértices adyacentes no compartan el mismo color.
 --
--- Si no quedan vértices por colorear ([]), devuelve Just con la asignación
--- completa.
+-- Al final se combinan ambas condiciones en una fórmula booleana
+-- utilizando 'All', que exige que ambas listas de cláusulas sean satisfechas.
+kColorFormula :: Grafica -> Int -> Formula ColorFormula
+kColorFormula g k = All (unSoloColorPorVertice ++ adjacenciaSinMismoColor)
+  where
+    vs = obtenerVertices g
+    as = obtenerAristas g
+
+    -- Para cada vértice v, se genera una cláusula que exige que exactamente
+    -- una de las variables ColorFormula v c sea verdadera (es decir, el
+    -- vértice v tiene un solo color c).
+    unSoloColorPorVertice = [ExactlyOne [Var (ColorFormula v c) | c <- [1 .. k]] | v <- vs]
+
+    -- Para cada par de vértices adyacentes (v, u), genera una cláusula que
+    -- prohíbe que v y u tengan el mismo color c.
+    adjacenciaSinMismoColor = [All [Not (Var (ColorFormula v c) :&&: Var (ColorFormula u c)) | c <- [1 .. k]] | (v, u) <- as]
+
+-- Se verifica si una coloración es una k-coloración válida. Primero
+-- se extraen los colores usados en la coloración (la segunda parte
+-- de las tuplas) y luego se verifica que cada color del 1 al k
+-- esté presente en la lista de colores usados.
 --
--- Funciona de la siguiente manera: Se intenta asignar un color válido al primer
--- vértice (v). Si hay asignaciones posibles (asignacionesPosibles), la función continúa con
--- el siguiente vértice. Si no hay ninguna asignación válida, devuelve Nothing.
-kColorar :: [Vertice] -> [Arista] -> Int -> [(Vertice, Color)] -> Coloracion
-kColorar [] _ _ asignacion = Just asignacion
-kColorar (v : vs) as k asignacion =
-  let coloresPosibles = [1 .. k]
-      asignacionesPosibles = [(v, c) : asignacion | c <- coloresPosibles, esValido v c as asignacion]
-   in case asignacionesPosibles of
-        [] -> Nothing
-        (a : _) -> kColorar vs as k a
+-- Esto evita situaciones donde, si se tiene una k-coloracion, pero
+-- no una n-coloracion, con n>k, se reemplaze dicho color para que
+-- se genere una coloración "válida".
+esColoracionValida :: Int -> Coloracion -> Bool
+esColoracionValida k coloracion = all (`elem` colors) [1 .. k]
+  where
+    colors = map snd coloracion
 
--- Función que verifica si la asignación de color es válida
-esValido :: Vertice -> Color -> [Arista] -> [(Vertice, Color)] -> Bool
-esValido vertice color aristas asignacion =
-  all
-    ( \u -> case lookup u asignacion of
-        Just cu -> cu /= color
-        Nothing -> True
-    )
-    (adyacentes vertice aristas)
+-- Verificación completa de la k-coloración
+kColoracion :: Grafica -> Int -> IO [Coloracion]
+kColoracion g k = do
+  -- Se crean todas las fórmulas de Color.
+  let formula = kColorFormula g k
 
--- Función que devuelve los vértices adyacentes dado un vértice específico.
-adyacentes :: Vertice -> [Arista] -> [Vertice]
-adyacentes v as = [u | (u, v') <- as, v == v'] ++ [v' | (v', u) <- as, v == u]
+  -- Usando MiniSAT, buscamos todas las soluciones que satisfagan
+  -- el problema (pero aun no se validan si son coloraciones
+  -- válidas).
+  let soluciones = solve_all formula
+
+  -- Se convierten las soluciones del solucionador en coloraciones,
+  -- filtrando las variables verdaderas y transformándolas en una
+  -- lista de tuplas vértice-color.
+  let coloraciones = map (map (\(ColorFormula v c, _) -> (v, c)) . Map.toList . Map.filter id) soluciones
+
+  -- Se filtran las coloraciones para asegurar que solo las válidas
+  -- (que usan todos los colores del 1 al k) sean incluidas.
+  let coloracionesValidas = filter (esColoracionValida k) coloraciones
+
+  return coloracionesValidas -- Se devuelven las coloraciones válidas.

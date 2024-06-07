@@ -1,15 +1,18 @@
 module GraphCLI where
+
 import Data.Char
-import System.Exit (exitSuccess)
-import Graphs
 import GraphColoring
+import Graphs
+import System.Exit (exitSuccess)
 
-
--- Método para obtener unicamente ints al pedirle un valor al usuario en la CLI.
+-- Método para obtener unicamente ints al pedirle un valor al usuario
+-- en la CLI.
 getInt :: IO Int
 getInt = read <$> getLine
 
-studentsInfoPrinter :: IO()
+-- Función para imprimir la información de los estudiantes. También sirve
+-- como la primera pantalla del menu de la CLI.
+studentsInfoPrinter :: IO ()
 studentsInfoPrinter = do
   putStrLn " \n==== Proyecto Final A: Haskell + MiniSAT ===="
   putStrLn " Proyecto realizado por los alumnos "
@@ -21,8 +24,10 @@ studentsInfoPrinter = do
   putStrLn " ==== 2. Salir ===="
   putStrLn "Solo escribe el número, el punto no es necesario. \n"
 
+-- Función para imprimir las diversas opciones del menu principal
+-- de la CLI.
 menuLoopInfoPrinter :: IO ()
-menuLoopInfoPrinter  = do
+menuLoopInfoPrinter = do
   putStrLn "\nSeleccione una opción:"
   putStrLn "1. Seleccionar / Cambiar Gráfica"
   putStrLn "2. Creación Manual: Agregar Vértice"
@@ -33,107 +38,113 @@ menuLoopInfoPrinter  = do
   putStrLn "7. Salir\n"
 
 -- Se envia una gráfica vacía nueva para iniciar el loop de ejecución del menú
--- de la CLI. Luego se recibe de vuelta para cerrar el programa imprimiendo la 
--- gráfica en su estado final. 
+-- de la CLI. Luego se recibe de vuelta para cerrar el programa imprimiendo la
+-- gráfica en su estado final.
 graphStarterEnder :: IO ()
 graphStarterEnder = do
   putStrLn "\nCreando una nueva gráfica..."
   let g = crearGrafica
   gFinal <- menuLoop g
-  putStrLn "Gráfica final:"
+  putStrLn "\nGráfica final:"
   print gFinal
 
 -- Método para, en el menu principal del programa, poder cambiar a alguna gráfica
--- popular, como la gráfica de Petersen, K5, etc. 
+-- popular, como la gráfica de Petersen, K5, etc. Las gráficas a las que se puede
+-- cambiar se muestran en el archivo 'Graphs.hs'
 graphicSwitch :: Grafica -> IO Grafica
 graphicSwitch g = do
-  putStrLn "\nSelecciona la gráfica a usar"
+  putStrLn "\nSelecciona la gráfica a usar. Puedes verlas en imagen"
+  putStrLn "en la carpeta 'imagenes' en la carpeta raiz del programa."
   putStrLn "1. Gráfica de Petersen"
-  putStrLn "2. Gráfica Mariposa"
+  putStrLn "2. Gráfica Moño"
   putStrLn "3. Gráfica K5"
   putStrLn "4. Gráfica 6-Ciclo"
-  putStrLn "5. Grafica Aleatoria"
+  putStrLn "5. Grafica de Prueba"
   putStrLn "6. Regresar al menu Anterior"
   opcion <- getInt
   case opcion of
     1 -> do
-      let g' = graficaPetersen
-      return g'
+      let nuevaGrafica = graficaPetersen
+      return nuevaGrafica
     2 -> do
-      let g' = graficaMariposa
-      return g'
+      let nuevaGrafica = graficaMoño
+      return nuevaGrafica
     3 -> do
-      let g' = graficaK5
-      return g'
+      let nuevaGrafica = graficaK5
+      return nuevaGrafica
     4 -> do
-      let g' = graficaCiclo6
-      return g'
+      let nuevaGrafica = graficaCiclo6
+      return nuevaGrafica
     5 -> do
-      let g' = graficaRandom
-      return g'
+      let nuevaGrafica = graficaPrueba
+      return nuevaGrafica
     6 -> do
-      putStrLn "Gráfica No Modificada. Regresando al menu anterior..."
+      putStrLn "\nGráfica No Modificada. Regresando al menu anterior..."
       return g
     _ -> do
-      putStrLn "Gráfica No Modificada. Regresando al menu anterior..."
+      putStrLn "\nGráfica No Modificada. Regresando al menu anterior..."
       return g
 
 -- Método para iniciar el proceso de coloración de la gráfica en ejecución.
-initiateColoration :: Grafica -> IO (Maybe [(Vertice, Color)], Grafica)
+initiateColoration :: Grafica -> IO (Maybe [Coloracion], Grafica)
 initiateColoration graph = do
-  putStrLn "Ingrese el la cantidad de colores a verificar"
+  putStrLn "'\nIngrese el la cantidad de colores a verificar"
   kColors <- getInt
-  let result = kColoracionSimple graph kColors
-  case result of
-        Just coloration -> print coloration
-        Nothing -> putStrLn "No se pudo encontrar una coloración válida."
-  return (result, graph)
+  coloraciones <- kColoracion graph kColors
+  if null coloraciones
+    then putStrLn "\nNo se pudo encontrar una coloración válida."
+    else do
+      putStrLn "\nEl Patron resultante es el siguiente: en la primera entrada"
+      putStrLn "se encuentra el número del vértice y después el color asignado a este.\n"
+      mapM_ print coloraciones
+  return (if null coloraciones then Nothing else Just coloraciones, graph)
 
 -- Menú de opciones para interactuar con la gráfica
 menuLoop :: Grafica -> IO Grafica
-menuLoop g = do
+menuLoop grafica = do
   menuLoopInfoPrinter
   opcion <- getLine
   case opcion of
     "1" -> do
-      g' <- graphicSwitch g
-      putStrLn ("Gráfica actual: " ++ show g')
-      menuLoop g'
+      nuevaGrafica <- graphicSwitch grafica
+      putStrLn ("\nGráfica actual: " ++ show nuevaGrafica)
+      menuLoop nuevaGrafica
     "2" -> do
       putStrLn "Ingrese el vértice:"
       v <- getInt
-      let g' = agregarVertice v g
-      putStrLn ("Gráfica actualizada: " ++ show g')
-      menuLoop g'
+      let nuevaGrafica = agregarVertice v grafica
+      putStrLn ("\nGráfica actualizada: " ++ show nuevaGrafica)
+      menuLoop nuevaGrafica
     "3" -> do
-      putStrLn "Ingrese el primer vértice de la arista:"
+      putStrLn "\nIngrese el primer vértice de la arista:"
       v1 <- readLn
-      putStrLn "Ingrese el segundo vértice de la arista:"
+      putStrLn "\nIngrese el segundo vértice de la arista:"
       v2 <- readLn
-      let g' = agregarArista (v1, v2) g
-      putStrLn ("Gráfica actualizada: " ++ show g')
-      menuLoop g'
+      let nuevaGrafica = agregarArista (v1, v2) grafica
+      putStrLn ("\nGráfica actualizada: " ++ show nuevaGrafica)
+      menuLoop nuevaGrafica
     "4" -> do
-      putStrLn "Ingrese el vértice:"
+      putStrLn "\nIngrese el vértice:"
       v <- getInt
-      putStrLn "Vecinos: "
-      print $ vecinos v g
-      putStrLn ("Gráfica actual: " ++ show g)
-      menuLoop g
+      putStrLn "\nVecinos: "
+      print $ vecinos v grafica
+      putStrLn ("\nGráfica actual: " ++ show grafica)
+      menuLoop grafica
     "5" -> do
       putStrLn "Ingrese el vértice:"
       v <- getInt
       putStrLn "Grado:"
-      print $ grado v g
-      putStrLn ("Gráfica actual: " ++ show g)
-      menuLoop g
+      print $ grado v grafica
+      putStrLn ("\nGráfica actual: " ++ show grafica)
+      menuLoop grafica
     "6" -> do
-      (resultado, g) <- initiateColoration g
-      menuLoop g
-    "7" -> return g
+      (resultado, grafica) <- initiateColoration grafica
+      putStrLn ("\nGráfica actual: " ++ show grafica)
+      menuLoop grafica
+    "7" -> return grafica
     _ -> do
-      putStrLn "Opción no válida, intente de nuevo."
-      menuLoop g
+      putStrLn "\nOpción no válida, intente de nuevo."
+      menuLoop grafica
 
 -- Método principal de ejecución del programa.
 main :: IO ()
@@ -145,5 +156,5 @@ main = do
       putStrLn "No es una opción válida" >> main
     else case read x :: Int of
       1 -> graphStarterEnder
-      2 -> exitSuccess -- ? Buscar como salir del ghci desde este punto.
+      2 -> exitSuccess
       _ -> putStrLn "No es una opción válida" >> main

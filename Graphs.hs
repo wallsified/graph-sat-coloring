@@ -11,20 +11,25 @@ module Graphs
     grado,
     graficaCiclo6,
     graficaK5,
-    graficaMariposa,
+    graficaMoño,
     graficaPetersen,
-    graficaRandom,
+    graficaPrueba,
     obtenerAristas,
-    obtenerVertices
+    obtenerVertices,
   )
 where
 
 import Data.List (nub)
 
+-- Representamos los vértices como enteros del 1 al n
 type Vertice = Int
 
+-- Representamos las aristas como una tupla de vértices izquierdo
+-- y derecho.
 type Arista = (Vertice, Vertice)
 
+-- Representamos una Gráfica como un conjunto conformado
+-- por una lista de vértices y una lista de aristas.
 data Grafica = Grafica
   { vertices :: [Vertice],
     aristas :: [Arista]
@@ -36,11 +41,12 @@ crearGrafica :: Grafica
 crearGrafica = Grafica [] []
 
 -- Agrega un vértice a la gráfica. Los vértices son identificados
--- por un número, por lo que se agregan usando Ints.
+-- por un número, por lo que se agregan usando Ints. Usamos
+-- 'nub' para quitar los duplicados que se pudieran encontrar.
 agregarVertice :: Vertice -> Grafica -> Grafica
 agregarVertice v (Grafica vs as) = Grafica (nub (v : vs)) as
 
--- Agrega una arista a la gráfica. Ambos vértices deben existir en 
+-- Agrega una arista a la gráfica. Ambos vértices deben existir en
 -- la gráfica para agregar una arista.
 agregarArista :: Arista -> Grafica -> Grafica
 agregarArista (v1, v2) g@(Grafica vs as)
@@ -55,16 +61,16 @@ obtenerVertices (Grafica vs _) = vs
 obtenerAristas :: Grafica -> [Arista]
 obtenerAristas (Grafica _ as) = as
 
--- Obtener los vecinos de un vértice. Busca en ambas direcciones (v, w) 
+-- Obtener los vecinos de un vértice. Busca en ambas direcciones (v, w)
 -- y (w, v) para encontrar todos los vecinos.
 vecinos :: Vertice -> Grafica -> [Vertice]
 vecinos vertice (Grafica _ aristas) =
   -- Para cada arista (v1, v2), se verifica si v1 es igual al vertice dado.
-  -- Si la condición v1 == vertice es verdadera, v2 se agrega a la lista directNeighbors.
-  let directNeighbors = [v2 | (v1, v2) <- aristas, v1 == vertice]
+  -- Si la condición v1 == vertice es verdadera, v2 se agrega a la lista vecinosDirectos.
+  let vecinosDirectos = [v2 | (v1, v2) <- aristas, v1 == vertice]
       -- Misma que el anterior, pero con el vertice contrario.
-      reverseNeighbors = [v1 | (v1, v2) <- aristas, v2 == vertice]
-   in nub (directNeighbors ++ reverseNeighbors)
+      vecinosReversos = [v1 | (v1, v2) <- aristas, v2 == vertice]
+   in nub (vecinosDirectos ++ vecinosReversos)
 
 -- Calcular el grado de un vértice
 grado :: Vertice -> Grafica -> Int
@@ -74,9 +80,9 @@ grado v grafica = length (vecinos v grafica)
 graficaPetersen :: Grafica
 graficaPetersen = Grafica [1 .. 10] [(1, 6), (1, 5), (1, 2), (2, 7), (2, 3), (3, 8), (3, 4), (4, 9), (4, 5), (5, 10), (6, 8), (6, 9), (7, 9), (7, 10), (8, 10)]
 
--- Gráfica "Mariposa" o "Moño"
-graficaMariposa :: Grafica
-graficaMariposa = Grafica [1 .. 5] [(1, 2), (1, 3), (2, 3), (3, 4), (3, 5), (4, 5)]
+-- Gráfica "Moño"
+graficaMoño :: Grafica
+graficaMoño = Grafica [1 .. 5] [(1, 2), (1, 3), (2, 3), (3, 4), (3, 5), (4, 5)]
 
 -- Gráfica K5, Completa-5
 graficaK5 :: Grafica
@@ -86,5 +92,6 @@ graficaK5 = Grafica [1 .. 5] [(1, 2), (1, 3), (1, 4), (1, 5), (2, 3), (2, 4), (2
 graficaCiclo6 :: Grafica
 graficaCiclo6 = Grafica [1 .. 6] [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 1)]
 
-graficaRandom :: Grafica
-graficaRandom = Grafica [1..4] [(1, 2), (2, 3), (3, 4), (4, 1), (1, 3)]
+-- Gráfica de Prueba
+graficaPrueba :: Grafica
+graficaPrueba = Grafica [1 .. 4] [(1, 2), (2, 3), (3, 4), (4, 1), (1, 3)]
