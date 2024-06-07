@@ -181,6 +181,6 @@ ver visualmente en la carpeta [images](images/) para un mejor entendimiento.
 
 - [Grafica de Petersen](images/graficaPetersen.png)
 - [Grafica K5](images/graficaK5.png)
-- [Grafica Moño](images/graficaMoño.png)
+- [Grafica Moño](images/graficaMono.png)
 - [Grafica 6-Ciclo](images/graficaCiclo6.png)
 - [Grafica de Prueba](images/graficaPrueba.png)
