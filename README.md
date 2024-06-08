@@ -94,82 +94,66 @@ Seleccione una opción:
 1. Seleccionar / Cambiar Gráfica
 2. Creación Manual: Agregar Vértice
 3. Creación Manual: Agregar Arista
-4. Mostrar Vecinos de un Vértice
-5. Mostrar Grado de un Vértice
-6. Iniciar Coloración de la Gráfica Actual
-7. Salir
+4. Iniciar Coloración de la Gráfica Actual
+5. Salir
 
 1
 
-Selecciona la gráfica a usar
+Selecciona la gráfica a usar. Puedes verlas en imagen
+en la carpeta 'imagenes' en la carpeta raiz del programa.
 1. Gráfica de Petersen
 2. Gráfica Moño
 3. Gráfica K5
 4. Gráfica 6-Ciclo
 5. Grafica de Prueba
 6. Regresar al menu Anterior
-5
+2
 
-Gráfica actual: Grafica {vertices = [1,2,3,4], aristas = [(1,2),(2,3),(3,4),(4,1),(1,3)]}
+Gráfica actual: Grafica {vertices = [1,2,3,4,5], aristas = [(1,2),(1,3),(2,3),(3,4),(3,5),(4,5)]}
 
 Seleccione una opción:
 1. Seleccionar / Cambiar Gráfica
 2. Creación Manual: Agregar Vértice
 3. Creación Manual: Agregar Arista
-4. Mostrar Vecinos de un Vértice
-5. Mostrar Grado de un Vértice
-6. Iniciar Coloración de la Gráfica Actual
-7. Salir
+4. Iniciar Coloración de la Gráfica Actual
+5. Salir
 
-6
+4
 '
 Ingrese el la cantidad de colores a verificar
-4
+3
 
 El Patron resultante es el siguiente: en la primera entrada
 se encuentra el número del vértice y después el color asignado a este.
 
-[(1,2),(2,4),(3,3),(4,1)]
-[(1,2),(2,4),(3,1),(4,3)]
-[(1,2),(2,1),(3,4),(4,3)]
-[(1,2),(2,3),(3,1),(4,4)]
-[(1,2),(2,1),(3,3),(4,4)]
-[(1,2),(2,3),(3,4),(4,1)]
-[(1,4),(2,3),(3,1),(4,2)]
-[(1,4),(2,1),(3,2),(4,3)]
-[(1,1),(2,3),(3,4),(4,2)]
-[(1,4),(2,1),(3,3),(4,2)]
-[(1,1),(2,2),(3,4),(4,3)]
-[(1,4),(2,2),(3,1),(4,3)]
-[(1,1),(2,3),(3,2),(4,4)]
-[(1,4),(2,3),(3,2),(4,1)]
-[(1,1),(2,2),(3,3),(4,4)]
-[(1,1),(2,4),(3,2),(4,3)]
-[(1,4),(2,2),(3,3),(4,1)]
-[(1,1),(2,4),(3,3),(4,2)]
-[(1,3),(2,1),(3,4),(4,2)]
-[(1,3),(2,1),(3,2),(4,4)]
-[(1,3),(2,2),(3,1),(4,4)]
-[(1,3),(2,2),(3,4),(4,1)]
-[(1,3),(2,4),(3,1),(4,2)]
-[(1,3),(2,4),(3,2),(4,1)]
+[(1,3),(2,1),(3,2),(4,3),(5,1)]
+[(1,1),(2,3),(3,2),(4,3),(5,1)]
+[(1,2),(2,1),(3,3),(4,1),(5,2)]
+[(1,3),(2,1),(3,2),(4,1),(5,3)]
+[(1,2),(2,1),(3,3),(4,2),(5,1)]
+[(1,3),(2,2),(3,1),(4,2),(5,3)]
+[(1,3),(2,2),(3,1),(4,3),(5,2)]
+[(1,1),(2,2),(3,3),(4,2),(5,1)]
+[(1,1),(2,3),(3,2),(4,1),(5,3)]
+[(1,1),(2,2),(3,3),(4,1),(5,2)]
+[(1,2),(2,3),(3,1),(4,2),(5,3)]
+[(1,2),(2,3),(3,1),(4,3),(5,2)]
 
-Gráfica actual: Grafica {vertices = [1,2,3,4], aristas = [(1,2),(2,3),(3,4),(4,1),(1,3)]}
+Gráfica actual: Grafica {vertices = [1,2,3,4,5], aristas = [(1,2),(1,3),(2,3),(3,4),(3,5),(4,5)]}
 
 Seleccione una opción:
 1. Seleccionar / Cambiar Gráfica
 2. Creación Manual: Agregar Vértice
 3. Creación Manual: Agregar Arista
-4. Mostrar Vecinos de un Vértice
-5. Mostrar Grado de un Vértice
-6. Iniciar Coloración de la Gráfica Actual
-7. Salir
+4. Iniciar Coloración de la Gráfica Actual
+5. Salir
 
-7
+5
 
 Gráfica final:
-Grafica {vertices = [1,2,3,4], aristas = [(1,2),(2,3),(3,4),(4,1),(1,3)]}
-ghci>
+Grafica {vertices = [1,2,3,4,5], aristas = [(1,2),(1,3),(2,3),(3,4),(3,5),(4,5)]}
+ghci> :q
+Leaving GHCi.
 ```
 
 Para salir del entorno de ejecución `ghci`, se ejecuta `:q`

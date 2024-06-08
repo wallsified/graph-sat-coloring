@@ -32,8 +32,6 @@ menuLoopInfoPrinter = do
   putStrLn "1. Seleccionar / Cambiar Gráfica"
   putStrLn "2. Creación Manual: Agregar Vértice"
   putStrLn "3. Creación Manual: Agregar Arista"
-  --putStrLn "4. Mostrar Vecinos de un Vértice"
-  --putStrLn "5. Mostrar Grado de un Vértice"
   putStrLn "4. Iniciar Coloración de la Gráfica Actual"
   putStrLn "5. Salir\n"
 
@@ -123,20 +121,6 @@ menuLoop grafica = do
       let nuevaGrafica = agregarArista (v1, v2) grafica
       putStrLn ("\nGráfica actualizada: " ++ show nuevaGrafica)
       menuLoop nuevaGrafica
-{-     "4" -> do
-      putStrLn "\nIngrese el vértice:"
-      v <- getInt
-      putStrLn "\nVecinos: "
-      print $ vecinos v grafica
-      putStrLn ("\nGráfica actual: " ++ show grafica)
-      menuLoop grafica -}
-{-     "5" -> do
-      putStrLn "Ingrese el vértice:"
-      v <- getInt
-      putStrLn "Grado:"
-      print $ grado v grafica
-      putStrLn ("\nGráfica actual: " ++ show grafica)
-      menuLoop grafica -}
     "4" -> do
       (resultado, grafica) <- initiateColoration grafica
       putStrLn ("\nGráfica actual: " ++ show grafica)
