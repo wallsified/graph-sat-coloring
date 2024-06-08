@@ -32,10 +32,10 @@ menuLoopInfoPrinter = do
   putStrLn "1. Seleccionar / Cambiar Gráfica"
   putStrLn "2. Creación Manual: Agregar Vértice"
   putStrLn "3. Creación Manual: Agregar Arista"
-  putStrLn "4. Mostrar Vecinos de un Vértice"
-  putStrLn "5. Mostrar Grado de un Vértice"
-  putStrLn "6. Iniciar Coloración de la Gráfica Actual"
-  putStrLn "7. Salir\n"
+  --putStrLn "4. Mostrar Vecinos de un Vértice"
+  --putStrLn "5. Mostrar Grado de un Vértice"
+  putStrLn "4. Iniciar Coloración de la Gráfica Actual"
+  putStrLn "5. Salir\n"
 
 -- Se envia una gráfica vacía nueva para iniciar el loop de ejecución del menú
 -- de la CLI. Luego se recibe de vuelta para cerrar el programa imprimiendo la
@@ -123,25 +123,25 @@ menuLoop grafica = do
       let nuevaGrafica = agregarArista (v1, v2) grafica
       putStrLn ("\nGráfica actualizada: " ++ show nuevaGrafica)
       menuLoop nuevaGrafica
-    "4" -> do
+{-     "4" -> do
       putStrLn "\nIngrese el vértice:"
       v <- getInt
       putStrLn "\nVecinos: "
       print $ vecinos v grafica
       putStrLn ("\nGráfica actual: " ++ show grafica)
-      menuLoop grafica
-    "5" -> do
+      menuLoop grafica -}
+{-     "5" -> do
       putStrLn "Ingrese el vértice:"
       v <- getInt
       putStrLn "Grado:"
       print $ grado v grafica
       putStrLn ("\nGráfica actual: " ++ show grafica)
-      menuLoop grafica
-    "6" -> do
+      menuLoop grafica -}
+    "4" -> do
       (resultado, grafica) <- initiateColoration grafica
       putStrLn ("\nGráfica actual: " ++ show grafica)
       menuLoop grafica
-    "7" -> return grafica
+    "5" -> return grafica
     _ -> do
       putStrLn "\nOpción no válida, intente de nuevo."
       menuLoop grafica

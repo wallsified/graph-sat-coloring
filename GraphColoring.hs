@@ -3,7 +3,7 @@ module GraphColoring
     Coloracion,
   )
 where
-
+ 
 import Data.Map (Map)
 import Data.Map qualified as Map
 import Graphs
@@ -18,11 +18,6 @@ data ColorFormula = ColorFormula Vertice Color deriving (Eq, Ord, Show)
 -- El tipo Coloración será la lista de tuplas vértice-color asignado
 type Coloracion = [(Vertice, Color)]
 
--- Crear variables de color para cada vértice y color. Iteramos sobre
--- cada vértice y sobre cada número del 1 al k para regresar una lista
--- con las formulas de Color.
-colorFormulas :: [Vertice] -> Int -> [ColorFormula]
-colorFormulas vs k = [ColorFormula v c | v <- vs, c <- [1 .. k]]
 
 -- Crear fórmula booleana que representa el problema de k-coloración.
 -- La fórmula asegura que cada vértice tenga exactamente un color y

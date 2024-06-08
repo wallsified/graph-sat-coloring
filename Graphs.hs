@@ -5,10 +5,8 @@ module Graphs
     crearGrafica,
     agregarVertice,
     agregarArista,
-    vecinos,
     vertices,
     aristas,
-    grado,
     graficaCiclo6,
     graficaK5,
     graficaMoño,
@@ -60,21 +58,6 @@ obtenerVertices (Grafica vs _) = vs
 -- Obtención de los vértices de una gráfica.
 obtenerAristas :: Grafica -> [Arista]
 obtenerAristas (Grafica _ as) = as
-
--- Obtener los vecinos de un vértice. Busca en ambas direcciones (v, w)
--- y (w, v) para encontrar todos los vecinos.
-vecinos :: Vertice -> Grafica -> [Vertice]
-vecinos vertice (Grafica _ aristas) =
-  -- Para cada arista (v1, v2), se verifica si v1 es igual al vertice dado.
-  -- Si la condición v1 == vertice es verdadera, v2 se agrega a la lista vecinosDirectos.
-  let vecinosDirectos = [v2 | (v1, v2) <- aristas, v1 == vertice]
-      -- Misma que el anterior, pero con el vertice contrario.
-      vecinosReversos = [v1 | (v1, v2) <- aristas, v2 == vertice]
-   in nub (vecinosDirectos ++ vecinosReversos)
-
--- Calcular el grado de un vértice
-grado :: Vertice -> Grafica -> Int
-grado v grafica = length (vecinos v grafica)
 
 -- Gráfica de Petersen
 graficaPetersen :: Grafica
